@@ -6,7 +6,7 @@
 #    By: vincent <vincent@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/11/12 16:25:45 by vgalloni          #+#    #+#              #
-#    Updated: 2025/02/24 15:21:17 by vincent          ###   ########.fr        #
+#    Updated: 2025/02/24 17:20:53 by vincent          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,10 @@ NAME = so_long
 CC = cc
 CFLAGS = -Wall -Wextra -Werror -g
 
-SRC = $(wildcard *.c) $(wildcard utils/**/*.c)
+SRC = 	main.c assets.c utils/assets_man/ft_key_callback.c utils/assets_man/map_variety.c \
+		utils/assets_man/mouvment.c utils/assets_man/render.c utils/err_man/err_man.c \
+		utils/err_man/err_man2.c utils/map_test/checks.c utils/map_test/get_map.c
+		
 OBJS_DIR = obj
 OBJS = $(addprefix $(OBJS_DIR)/, $(SRC:.c=.o))
 
@@ -28,14 +31,15 @@ MLX_FLAGS = $(MLX_LIB) -ldl -lglfw -pthread -lm
 
 INCLUDES = -I $(MLX_DIR)/include -I $(LIB42_DIR)
 
-all: libmlx fetch_lib $(NAME)
+all: libs fetch_lib $(NAME)
 
 fetch_lib:
 	@git submodule update --init --recursive
 
-libmlx:
+libs:
 	@cmake $(MLX_DIR) -B $(MLX_DIR)/build && make -C $(MLX_DIR)/build -j4
-
+	@make -C $(LIB42_DIR)
+	
 $(OBJS_DIR):
 	@mkdir -p $(OBJS_DIR)/utils/assets_man
 	@mkdir -p $(OBJS_DIR)/utils/map_test
@@ -60,3 +64,5 @@ fclean: clean
 	@make fclean -C $(LIB42_DIR)
 	
 re: fclean all
+
+.PHONY: all fetch_lib libs clean fclean re
